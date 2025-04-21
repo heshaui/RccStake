@@ -3,11 +3,11 @@ import { Box } from "@mui/material";
 
 function Header() {
     return (
-        <div className="flex">
+        <Box>
             <div>RCC Stake</div>
             <div></div>
             <ConnectButton />
-        </div>
+        </Box>
     )
 }
 

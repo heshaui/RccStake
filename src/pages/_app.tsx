@@ -6,15 +6,17 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { WagmiProvider } from 'wagmi';
 import { RainbowKitProvider } from '@rainbow-me/rainbowkit';
 
-import { Head } from 'next/document';
+import  Head from 'next/head';
 import Layout from '../components/Layout';
 import { ToastContainer, Zoom } from 'react-toastify';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
 
 import { config } from '../wagmi';
 
 const client = new QueryClient();
 
 function MyApp({ Component, pageProps }: AppProps) {
+  const theme = createTheme();
   return (
     <>
       <Head>
@@ -28,20 +30,22 @@ function MyApp({ Component, pageProps }: AppProps) {
       <WagmiProvider config={config}>
         <QueryClientProvider client={client}>
           <RainbowKitProvider>
-            <ToastContainer
-              position="top-center"
-              autoClose={3000}
-              hideProgressBar={false}
-              newestOnTop={false}
-              closeOnClick
-              rtl={false}
-              pauseOnFocusLoss
-              draggable
-              pauseOnHover
-              theme="light"
-              transition={Zoom}
-            />
-            <Layout><Component {...pageProps} /></Layout>
+            <ThemeProvider theme={theme}>
+              <ToastContainer
+                position="top-center"
+                autoClose={3000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="light"
+                transition={Zoom}
+              />
+              <Layout><Component {...pageProps} /></Layout>
+            </ThemeProvider>
           </RainbowKitProvider>
         </QueryClientProvider>
       </WagmiProvider>
