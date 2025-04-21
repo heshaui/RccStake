@@ -11,7 +11,7 @@ import Layout from '../components/Layout';
 import { ToastContainer, Zoom } from 'react-toastify';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 
-import { config } from '../wagmi';
+import { config } from '../utils/wagmi';
 
 const client = new QueryClient();
 
