@@ -22,3 +22,5 @@ export const config = getDefaultConfig({
   },
   ssr: true,
 });
+
+export const defaultChainId: number = sepolia.id;
