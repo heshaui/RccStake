@@ -1,14 +1,55 @@
 import { Box, Typography, TextField, Button } from "@mui/material";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useAccount, useBalance, useWalletClient } from 'wagmi'
+import { useStakeContract } from "../../hooks/useContract";
+import { Pid } from "../../utils/config";
+import { formatEther, parseEther } from "viem";
+import { ConnectButton } from "@rainbow-me/rainbowkit"; 
+import LoadingButton from '@mui/lab/LoadingButton';
+import { toast } from "react-toastify";
+import { waitForTransactionReceipt } from "viem/actions";
 const Home = () => {
     const [amount, setAmount] = useState('0')
     const [stakeAmount, setStakeAmount] = useState('0')
     const [loading, setLoading] = useState(false)
     const { address, isConnected } = useAccount();
+    const { data: wallet } = useWalletClient()
     const { data: balance } = useBalance({
         address,
     });
+
+    //处理质押
+    const stakeContract = useStakeContract()
+    const handleStake = async() => {
+        if (!stakeContract || !wallet) return
+        console.log('wallet', balance, amount)
+        if (parseFloat(amount) > parseFloat(balance!.formatted)) {
+            toast.error('Amount cannot be greater than current balance')
+            return
+        }
+        try {
+            setLoading(true)
+            const tx = await stakeContract.write.depositETH([], parseEther(amount))
+            const res = await waitForTransactionReceipt(wallet, {hash: tx})
+            toast.success('Transaction receipt !')
+            setLoading(false)
+            getStakeAmount()
+        } catch (err) {
+            setLoading(false)
+            toast.error('stake error')
+        }
+
+    }
+    const getStakeAmount = useCallback(async () => {
+        if (stakeContract && address) {
+            const amountRes = await stakeContract?.read.stakingBalance([Pid, address])
+            setStakeAmount(formatEther(amountRes as bigint))
+        }
+    }, [stakeContract, address])
+
+    useEffect(() => {
+        if (stakeContract && address) getStakeAmount()
+    }, [stakeContract, address])
     return (
         <Box display="flex" flexDirection="column" alignItems="center">
             <Typography sx={{fontSize: '30px', lineHeight: '40px', color: '#333', fontWeight: 700}}>Rcc Stake</Typography>
@@ -28,7 +69,19 @@ const Home = () => {
                     Staked Amount: {stakeAmount} ETH
                 </Box>
                 <TextField label="Amount" variant="outlined" onChange={e => setAmount(e.target.value)} />
-                <Button sx={{display: 'inline-block', mt: '20px'}} variant="contained">Stake</Button>
+                <Box mt='30px'>
+                    {
+                        !isConnected ? 
+                        <ConnectButton /> : 
+                        <LoadingButton 
+                            variant='contained' 
+                            loading={loading} 
+                            onClick={handleStake}
+                        >
+                            Stake
+                        </LoadingButton>
+                    }
+                </Box>
             </Box>
         </Box>
     )
