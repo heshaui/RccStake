@@ -24,7 +24,8 @@ export const useContract = <TAbi extends Abi>(
     const { data: walletClient } = useWalletClient();
   
     return useMemo(() => {
-      if (!addressOrAddressMap || !abi || !options) return null;
+      console.log(addressOrAddressMap)
+      if (!addressOrAddressMap || !abi || !chainId) return null;
       const address =
         typeof addressOrAddressMap === 'string'
           ? addressOrAddressMap

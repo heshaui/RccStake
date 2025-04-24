@@ -4,11 +4,11 @@ import { useAccount, useBalance, useWalletClient } from 'wagmi'
 import { useStakeContract } from "../../hooks/useContract";
 import { Pid } from "../../utils/config";
 import { formatEther, parseEther } from "viem";
-import { ConnectButton } from "@rainbow-me/rainbowkit"; 
-import LoadingButton from '@mui/lab/LoadingButton';
+import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { toast } from "react-toastify";
 import { waitForTransactionReceipt } from "viem/actions";
-const Home = () => {
+import { NextPage } from "next";
+const Home: NextPage = () => {
     const [amount, setAmount] = useState('0')
     const [stakeAmount, setStakeAmount] = useState('0')
     const [loading, setLoading] = useState(false)
@@ -65,21 +65,21 @@ const Home = () => {
                     mt: '30px'
                 }}
             >
-                <Box sx={{fontSize: '20px', color: '#333', lineHeight: '30px'}}>
+                <Box sx={{fontSize: '16px', color: '#333', lineHeight: '30px'}}>
                     Staked Amount: {stakeAmount} ETH
                 </Box>
-                <TextField label="Amount" variant="outlined" onChange={e => setAmount(e.target.value)} />
+                <TextField sx={{width: '300px'}} label="Amount" variant="outlined" onChange={e => setAmount(e.target.value)} />
                 <Box mt='30px'>
                     {
                         !isConnected ? 
                         <ConnectButton /> : 
-                        <LoadingButton 
+                        <Button 
                             variant='contained' 
                             loading={loading} 
                             onClick={handleStake}
                         >
                             Stake
-                        </LoadingButton>
+                        </Button>
                     }
                 </Box>
             </Box>
