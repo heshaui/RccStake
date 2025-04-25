@@ -1,5 +1,5 @@
 import { Box, Typography, TextField, Button } from "@mui/material";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { useAccount, useBalance, useWalletClient } from 'wagmi'
 import { useStakeContract } from "../../hooks/useContract";
 import { Pid } from "../../utils/config";
@@ -7,6 +7,7 @@ import { formatEther, parseEther } from "viem";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { toast } from "react-toastify";
 import { waitForTransactionReceipt } from "viem/actions";
+import { useStake } from '../../hooks/useStakeContract'
 import { NextPage } from "next";
 const Home: NextPage = () => {
     const [amount, setAmount] = useState('0')
@@ -40,6 +41,11 @@ const Home: NextPage = () => {
         }
 
     }
+    // const { stake: handleStake, isLoading, error } = useStake(amount)
+
+    // useEffect(() => {
+    //     if (error) toast.error(error.message)
+    // }, [error])
     const getStakeAmount = useCallback(async () => {
         if (stakeContract && address) {
             const amountRes = await stakeContract?.read.stakingBalance([Pid, address])
